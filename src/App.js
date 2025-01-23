@@ -42,80 +42,145 @@
 
 
 //Lesson 25//
-import React, { Component } from "react";
+// import React, { Component } from "react";
+//
+// class Voting extends Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       smiles: [
+//         {id: 1, smile: '😀', votes: 0},
+//         {id: 2, smile: '😊', votes: 0},
+//         {id: 3, smile: '😎', votes: 0},
+//         {id: 4, smile: '🤩', votes: 0},
+//         {id: 5, smile: '😍', votes: 0},
+//       ],
+//       result: null,
+//     };
+//   }
+//
+//   componentDidMount() {
+//     const savedVotes = JSON.parse(localStorage.getItem('votes'));
+//     if (savedVotes) {
+//       this.setState({smiles: savedVotes});
+//     }
+//   }
+//
+//   updateVotes = (id) => {
+//     const updatedVotes = this.state.smiles.map((smile) => {
+//       if (smile.id === id) {
+//         smile.votes += 1;
+//       }
+//       return smile;
+//     });
+//     this.setState({smiles: updatedVotes});
+//     localStorage.setItem('votes', JSON.stringify(updatedVotes));
+//   };
+//
+//   showResults = () => {
+//     const winner = this.state.smiles.reduce((a, b) => (a.votes > b.votes ? a : b));
+//     this.setState({result: winner});
+//   }
+//
+//   clearResults = () => {
+//     this.setState({
+//       smiles: [
+//         { id: 1, smile: "😀", votes: 0 },
+//         { id: 2, smile: "😊", votes: 0 },
+//         { id: 3, smile: "😎", votes: 0 },
+//         { id: 4, smile: "🤩", votes: 0 },
+//         { id: 5, smile: "😍", votes: 0 },
+//       ],
+//       result: null,
+//     });
+//     localStorage.removeItem('votes');
+//   };
+//
+//   render() {
+//
+//     return (
+//         <div>
+//           <h1>Голосування за смайлик</h1>
+//           <div>
+//             <button onClick={() => this.updateVotes(1)}>😀 {this.state.smiles[0].votes}</button>
+//             <button onClick={() => this.updateVotes(2)}>😊 {this.state.smiles[1].votes}</button>
+//             <button onClick={() => this.updateVotes(3)}>😎 {this.state.smiles[2].votes}</button>
+//             <button onClick={() => this.updateVotes(4)}>🤩 {this.state.smiles[3].votes}</button>
+//             <button onClick={() => this.updateVotes(5)}>😍 {this.state.smiles[4].votes}</button>
+//           </div>
+//           <button onClick={this.showResults}>Результат</button>
+//           <button onClick={this.clearResults}>Очистити</button>
+//           <div>
+//             {this.state.result ? `Переможець: ${this.state.result.smile} (${this.state.result.votes})` : null}
+//           </div>
+//         </div>
+//     );
+//   }
+// }
+//
+// export default Voting;
 
-class Voting extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      smiles: [
-        {id: 1, smile: '😀', votes: 0},
-        {id: 2, smile: '😊', votes: 0},
-        {id: 3, smile: '😎', votes: 0},
-        {id: 4, smile: '🤩', votes: 0},
-        {id: 5, smile: '😍', votes: 0},
-      ],
-      result: null,
-    };
-  }
+//Lesson 26//
+import React, {useState, useEffect} from "react";
 
-  componentDidMount() {
+const Voting = () => {
+  const initialSmiles = [
+    { id: 1, smile: "😀", votes: 0 },
+    { id: 2, smile: "😊", votes: 0 },
+    { id: 3, smile: "😎", votes: 0 },
+    { id: 4, smile: "🤩", votes: 0 },
+    { id: 5, smile: "😍", votes: 0 },
+  ];
+
+  const [smiles, setSmiles] = useState(initialSmiles);
+  const [result, setResult] = useState(null);
+
+  useEffect(() => {
     const savedVotes = JSON.parse(localStorage.getItem('votes'));
     if (savedVotes) {
-      this.setState({smiles: savedVotes});
+      setSmiles(savedVotes);
     }
-  }
+  }, []);
 
-  updateVotes = (id) => {
-    const updatedVotes = this.state.smiles.map((smile) => {
+  const updateVotes = (id) => {
+    const updatedVotes = smiles.map((smile) => {
       if (smile.id === id) {
-        smile.votes += 1;
+        return { ...smile, votes: smile.votes + 1};
       }
       return smile;
     });
-    this.setState({smiles: updatedVotes});
+    setSmiles(updatedVotes);
     localStorage.setItem('votes', JSON.stringify(updatedVotes));
   };
 
-  showResults = () => {
-    const winner = this.state.smiles.reduce((a, b) => (a.votes > b.votes ? a : b));
-    this.setState({result: winner});
-  }
+  const showResults = () => {
+    const winner = smiles.reduce((a,b) => (a.votes > b.votes ? a : b));
+    setResult(winner);
+  };
 
-  clearResults = () => {
-    this.setState({
-      smiles: [
-        { id: 1, smile: "😀", votes: 0 },
-        { id: 2, smile: "😊", votes: 0 },
-        { id: 3, smile: "😎", votes: 0 },
-        { id: 4, smile: "🤩", votes: 0 },
-        { id: 5, smile: "😍", votes: 0 },
-      ],
-      result: null,
-    });
+  const clearResults = () => {
+    setSmiles(initialSmiles);
+    setResult(null);
     localStorage.removeItem('votes');
   };
 
-  render() {
-
-    return (
+  return (
+      <div>
+        <h1>Голосування за смайлик</h1>
         <div>
-          <h1>Голосування за смайлик</h1>
-          <div>
-            <button onClick={() => this.updateVotes(1)}>😀 {this.state.smiles[0].votes}</button>
-            <button onClick={() => this.updateVotes(2)}>😊 {this.state.smiles[1].votes}</button>
-            <button onClick={() => this.updateVotes(3)}>😎 {this.state.smiles[2].votes}</button>
-            <button onClick={() => this.updateVotes(4)}>🤩 {this.state.smiles[3].votes}</button>
-            <button onClick={() => this.updateVotes(5)}>😍 {this.state.smiles[4].votes}</button>
-          </div>
-          <button onClick={this.showResults}>Результат</button>
-          <button onClick={this.clearResults}>Очистити</button>
-          <div>
-            {this.state.result ? `Переможець: ${this.state.result.smile} (${this.state.result.votes})` : null}
-          </div>
+          {smiles.map(({id, smile, votes}) => (
+              <button onClick={() => updateVotes(id)}>
+                {smile} {votes}
+              </button>
+          ))}
         </div>
-    );
-  }
-}
+        <button onClick={showResults}>Результат</button>
+        <button onClick={clearResults}>Очистити</button>
+        <div>
+          {result ? <p>Переможець: ${result.smile} (${result.votes})</p> : null}
+        </div>
+      </div>
+  );
+};
 
 export default Voting;
